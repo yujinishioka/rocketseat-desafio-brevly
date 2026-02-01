@@ -1,0 +1,1 @@
+CREATE TABLE upload_test;
