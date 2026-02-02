@@ -26,6 +26,13 @@
           "primaryKey": false,
           "notNull": true
         },
+        "access": {
+          "name": "access",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "0"
+        },
         "remote_key": {
           "name": "remote_key",
           "type": "text",
@@ -47,9 +54,7 @@
         "uploads_remote_key_unique": {
           "name": "uploads_remote_key_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "remote_key"
-          ]
+          "columns": ["remote_key"]
         }
       },
       "policies": {},

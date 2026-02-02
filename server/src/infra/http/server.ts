@@ -29,8 +29,6 @@ server.setErrorHandler((error, request, reply) => {
 });
 
 server.register(fastifyCors, { origin: '*' });
-server.register(uploadLinkRoute);
-server.register(fastifyMultipart);
 server.register(fastifySwagger, {
   openapi: {
     info: {
@@ -41,6 +39,8 @@ server.register(fastifySwagger, {
   },
   transform: jsonSchemaTransform,
 });
+server.register(uploadLinkRoute);
+server.register(fastifyMultipart);
 server.register(fastifySwaggerUi, {
   routePrefix: '/docs',
 });

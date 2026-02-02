@@ -23,12 +23,18 @@ importers:
       drizzle-orm:
         specifier: ^0.45.1
         version: 0.45.1(gel@2.2.0)(postgres@3.4.8)
+      fastify:
+        specifier: ^5.2.0
+        version: 5.7.2
       fastify-type-provider-zod:
         specifier: ^6.1.0
         version: 6.1.0(@fastify/swagger@9.6.1)(fastify@5.7.2)(openapi-types@12.1.3)(zod@4.3.6)
       postgres:
-        specifier: ^3.4.8
+        specifier: ^3.4.5
         version: 3.4.8
+      uuidv7:
+        specifier: ^1.0.2
+        version: 1.1.0
       vitest:
         specifier: ^4.0.18
         version: 4.0.18(@types/node@25.1.0)(tsx@4.21.0)(yaml@2.8.2)
@@ -1318,6 +1324,10 @@ packages:
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
 
+  uuidv7@1.1.0:
+    resolution: {integrity: sha512-2VNnOC0+XQlwogChUDzy6pe8GQEys9QFZBGOh54l6qVfwoCUwwRvk7rDTgaIsRgsF5GFa5oiNg8LqXE3jofBBg==}
+    hasBin: true
+
   vite-tsconfig-paths@6.0.5:
     resolution: {integrity: sha512-f/WvY6ekHykUF1rWJUAbCU7iS/5QYDIugwpqJA+ttwKbxSbzNlqlE8vZSrsnxNQciUW+z6lvhlXMaEyZn9MSig==}
     peerDependencies:
@@ -2392,6 +2402,8 @@ snapshots:
   typescript@5.9.3: {}
 
   undici-types@7.16.0: {}
+
+  uuidv7@1.1.0: {}
 
   vite-tsconfig-paths@6.0.5(typescript@5.9.3)(vite@7.3.1(@types/node@25.1.0)(tsx@4.21.0)(yaml@2.8.2)):
     dependencies:
