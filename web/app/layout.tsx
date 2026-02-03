@@ -1,4 +1,3 @@
-import Header from "@/components/layouts/Header";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Quicksand } from "next/font/google";
 import "./globals.css";
@@ -34,7 +33,6 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${quicksand.variable} antialiased`}
       >
-        <Header className="flex justify-center md:justify-start" />
         {children}
       </body>
     </html>
