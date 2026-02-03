@@ -1,4 +1,4 @@
-import { fastifyCors } from "@fastify/cors";
+import cors from "@fastify/cors";
 import fastifyMultipart from "@fastify/multipart";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
@@ -28,7 +28,12 @@ server.setErrorHandler((error, request, reply) => {
   });
 });
 
-server.register(fastifyCors, { origin: '*' });
+server.register(cors, {
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+});
+
 server.register(fastifySwagger, {
   openapi: {
     info: {
