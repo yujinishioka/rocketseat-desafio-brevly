@@ -4,5 +4,5 @@ export type Upload = {
   url: string;
   access: number;
   remoteKey: string;
-  createdAt: unknown;
+  createdAt?: string | number | null;
 }
