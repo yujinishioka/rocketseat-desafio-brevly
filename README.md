@@ -1,4 +1,4 @@
-# Link Manager
+# brev.ly
 
 Este projeto é uma aplicação web para criação, gerenciamento e acompanhamento de links, permitindo registrar URLs encurtadas, monitorar acessos, exportar dados e gerenciar os registros de forma simples.
 
