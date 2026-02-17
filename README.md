@@ -4,6 +4,12 @@ Este projeto é uma aplicação web para criação, gerenciamento e acompanhamen
 
 A aplicação é dividida em backend (API) e frontend (web), rodando de forma independente.
 
+## Preview da aplicação
+
+<p align="center">
+  <img src="images/preview.png" alt="Preview do brev.ly" width="800" />
+</p>
+
 ---
 
 ## Funcionalidades
@@ -72,13 +78,19 @@ A aplicação é dividida em backend (API) e frontend (web), rodando de forma in
    docker-compose up -d
    ```
 
-3. Instale as dependências:
+3. Rodar as migrations:
+
+   ```bash
+   pnpm run db:migrate
+   ```
+
+4. Instale as dependências:
 
    ```bash
    pnpm i
    ```
 
-4. Inicie o servidor:
+5. Inicie o servidor:
    ```bash
    pnpm dev
    ```

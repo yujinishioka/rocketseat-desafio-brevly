@@ -1,13 +1,13 @@
 import { db } from "@/infra/db";
 import { schema } from "@/infra/db/schemas";
+import { urlSchema } from "@/infra/http/helpers/validation";
 import { eq, sql } from "drizzle-orm";
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import crypto from "node:crypto";
 import { z } from "zod";
 
 export const uploadLinkRoute: FastifyPluginAsyncZod = async server => {
-  server.get(
-    "/uploads",
+  server.get("/uploads",
     {
       schema: {
         summary: "List uploads",
@@ -35,8 +35,7 @@ export const uploadLinkRoute: FastifyPluginAsyncZod = async server => {
     }
   );
 
-  server.get(
-    "/uploads/:id",
+  server.get("/uploads/:id",
     {
       schema: {
         summary: "Get upload by id",
@@ -71,28 +70,59 @@ export const uploadLinkRoute: FastifyPluginAsyncZod = async server => {
       summary: "Generate an upload link",
       body: z.object({
         name: z.string(),
-        url: z.string(),
+        url: urlSchema,
       }),
       response: {
-        201: z.object({ uploadLinkId: z.string()}),
+        201: z.object({ uploadLinkId: z.string() }),
         400: z.object({ message: z.string() }),
-        409: z.object({ message: z.string() }).describe("Upload already exists"),
+        409: z.object({ message: z.string() }),
+        500: z.object({ message: z.string() }),
       },
     },
   }, async (request, reply) => {
     const remoteKey = crypto.randomUUID();
 
-    await db.insert(schema.uploads).values({
-      name: request.body.name,
-      url: request.body.url,
-      remoteKey,
-    });
-    
-    return reply.status(201).send({ uploadLinkId: "generated-upload-link-id" });
+    try {
+      await db.insert(schema.uploads).values({
+        name: request.body.name,
+        url: request.body.url,
+        remoteKey,
+      });
+
+      return reply.status(201).send({
+        uploadLinkId: "generated-upload-link-id",
+      });
+
+    } catch (error: any) {
+      const pgError = error?.cause;
+
+      if (pgError?.code === "23505") {
+        if (pgError.constraint_name === "uploads_name_unique") {
+          return reply.status(409).send({
+            message: "Esse nome já está em uso.",
+          });
+        }
+
+        if (pgError.constraint_name === "uploads_url_unique") {
+          return reply.status(409).send({
+            message: "Essa URL já está cadastrada.",
+          });
+        }
+
+        return reply.status(409).send({
+          message: "Nome ou URL já cadastrados.",
+        });
+      }
+
+      console.error("Erro não tratado:", error);
+
+      return reply.status(500).send({
+        message: "Internal server error",
+      });
+    }
   });
 
-  server.patch(
-    "/uploads/:id/access",
+  server.patch("/uploads/:id/access",
     {
       schema: {
         summary: "Increment upload access",
@@ -122,8 +152,7 @@ export const uploadLinkRoute: FastifyPluginAsyncZod = async server => {
     }
   );
 
-  server.delete(
-    "/uploads/:id",
+  server.delete("/uploads/:id",
     {
       schema: {
         summary: "Delete upload by id",

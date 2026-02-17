@@ -1,10 +1,12 @@
 "use client";
 
+import { ConfirmDialog } from "@/components/dialogs/ConfirmDialog";
 import { Upload } from "@/types/Upload";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 type Props = {
   uploads?: Upload[];
@@ -34,7 +36,8 @@ function csvEscape(value: string | number | null | undefined): string {
 }
 
 export default function MyLinks({ uploads, className }: Readonly<Props>) {
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const rowsForCsv = useMemo(() => {
@@ -82,27 +85,26 @@ export default function MyLinks({ uploads, className }: Readonly<Props>) {
     URL.revokeObjectURL(url);
   };
 
-  const handleDelete = async (id: string) => {
-    const ok = globalThis.confirm("Tem certeza que deseja excluir esse link?");
-    if (!ok) return;
+  const handleDelete = async () => {
+    if (!deleteId) return;
 
-    setDeletingId(id);
     try {
-      const res = await fetch(`http://localhost:3333/uploads/${id}`, {
+      setLoading(true);
+
+      const res = await fetch(`http://localhost:3333/uploads/${deleteId}`, {
         method: "DELETE",
       });
 
       if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        alert(data?.message ?? "Erro ao excluir link.");
-        return;
+        throw new Error("Erro ao excluir link.");
       }
 
       router.refresh();
-    } catch {
-      alert("Falha de rede ao excluir.");
+    } catch (err) {
+      console.error(err);
     } finally {
-      setDeletingId(null);
+      setDeleteId(null);
+      setLoading(false);
     }
   };
 
@@ -160,6 +162,9 @@ export default function MyLinks({ uploads, className }: Readonly<Props>) {
                       e.preventDefault();
                       e.stopPropagation();
                       navigator.clipboard.writeText(urlSanitized);
+                      toast.success(
+                        "O link foi copiado para a área de transferência.",
+                      );
                     }}
                     className="p-2 bg-gray-300 rounded opacity-70"
                     title="Copiar URL"
@@ -174,11 +179,11 @@ export default function MyLinks({ uploads, className }: Readonly<Props>) {
 
                   <button
                     type="button"
-                    disabled={deletingId === idStr}
+                    disabled={loading}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      handleDelete(idStr);
+                      setDeleteId(idStr);
                     }}
                     className="p-2 bg-gray-300 rounded opacity-70 disabled:opacity-40 disabled:cursor-not-allowed"
                     title="Excluir"
@@ -194,6 +199,17 @@ export default function MyLinks({ uploads, className }: Readonly<Props>) {
               </div>
             );
           })}
+
+          <ConfirmDialog
+            open={deleteId !== null}
+            onOpenChange={(isOpen) => {
+              if (!isOpen) setDeleteId(null);
+            }}
+            onConfirm={handleDelete}
+            loading={loading}
+            title="Confirmar exclusão"
+            description="Tem certeza que deseja excluir este link? Essa ação não pode ser desfeita."
+          />
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center gap-4 p-12 text-center border-t border-gray-200 opacity-70">

@@ -14,13 +14,14 @@ server.setSerializerCompiler(serializerCompiler);
 
 server.setErrorHandler((error, request, reply) => {
   if (hasZodFastifySchemaValidationErrors(error)) {
+    const firstError = error.validation[0];
+
     return reply.status(400).send({
-      message: 'Validation error',
-      issues: error.validation,
+      message: firstError.message,
+      field: firstError.instancePath.replace("/", ""),
     });
   }
 
-  // Envia erro para observabilidade
   console.log('Error:', error);
 
   return reply.status(500).send({
@@ -52,6 +53,10 @@ server.register(fastifySwaggerUi, {
 
 console.log(env.DATABASE_URL);
 
-server.listen({ port: 3333 }).then(() => {
+try {
+  await server.listen({ port: 3333 });
   console.log('HTTP server running on http://localhost:3333');
-});
+} catch (error) {
+  console.error(error);
+  process.exit(1);
+}

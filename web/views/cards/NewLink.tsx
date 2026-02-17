@@ -2,21 +2,20 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 export default function NewLink({
   className,
 }: Readonly<{ className?: string }>) {
   const [originalLink, setOriginalLink] = useState("");
   const [shortLink, setShortLink] = useState("");
-
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   const originalLinkSanitized = useMemo(
     () => originalLink.trim(),
     [originalLink],
   );
+
   const shortLinkSanitized = useMemo(() => shortLink.trim(), [shortLink]);
 
   const router = useRouter();
@@ -39,11 +38,8 @@ export default function NewLink({
   }, [originalLinkSanitized, shortLinkSanitized]);
 
   async function handleSubmit() {
-    setError(null);
-    setSuccess(null);
-
     if (!canSave) {
-      setError("Preencha os campos corretamente (URL inválida).");
+      toast.error("Preencha os campos corretamente (URL inválida).");
       return;
     }
 
@@ -72,17 +68,20 @@ export default function NewLink({
       if (!res.ok) {
         const message =
           data?.message || `Erro ao salvar (status ${res.status}).`;
-        setError(message);
+
+        toast.error(message);
         return;
       }
 
-      setSuccess("Link salvo com sucesso!");
+      toast.success("Link salvo com sucesso!");
+
       setOriginalLink("");
       setShortLink("");
 
       router.refresh();
     } catch (err) {
-      setError(`Erro: ${err}`);
+      console.error("Erro ao salvar link:", err);
+      toast.error("Erro inesperado ao salvar o link.");
     } finally {
       setLoading(false);
     }
@@ -115,18 +114,6 @@ export default function NewLink({
           />
         </div>
       </div>
-
-      {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-600">
-          {error}
-        </div>
-      )}
-
-      {success && (
-        <div className="rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-600">
-          {success}
-        </div>
-      )}
 
       <button
         onClick={handleSubmit}

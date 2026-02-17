@@ -1,5 +1,5 @@
 {
-  "id": "3a2e87ec-2464-4807-a6d9-92e3209c4f94",
+  "id": "30c7d25e-596b-436d-84f3-a071e002b534",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -31,7 +31,7 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "default": "0"
+          "default": 0
         },
         "remote_key": {
           "name": "remote_key",
@@ -51,10 +51,26 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
+        "uploads_name_unique": {
+          "name": "uploads_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        },
+        "uploads_url_unique": {
+          "name": "uploads_url_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "url"
+          ]
+        },
         "uploads_remote_key_unique": {
           "name": "uploads_remote_key_unique",
           "nullsNotDistinct": false,
-          "columns": ["remote_key"]
+          "columns": [
+            "remote_key"
+          ]
         }
       },
       "policies": {},
